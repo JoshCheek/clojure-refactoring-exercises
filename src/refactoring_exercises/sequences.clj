@@ -1,27 +1,17 @@
 (ns refactoring-exercises.sequences)
 
 (defn factorial [n]
-  (loop [product 1N
-         i 1]
-    (if (<= i n)
-      (recur (* product i) (inc i))
-      product)))
+  (reduce *' 1 (range 1 (inc n))))
 
-(defn first-letters [words]
-  (loop [words words
-         acc []]
-    (if-let [s (first words)]
-      (let [letter (first s)]
-        (recur (rest words) (conj acc letter)))
-      acc)))
+(def first-letters (partial map first))
 
 (defn- next-character [c]
-  (char (inc (int c))))
+  (-> c int inc char))
+
+(defn- geq [bound c]
+  (>= (int bound) (int c)))
 
 (defn character-range [first-inclusive last-inclusive]
-  (loop [character first-inclusive
-         letters []]
-    (if (<= (compare character last-inclusive) 0)
-      (recur (next-character character)
-             (conj letters character))
-      letters)))
+  (take-while
+    (partial geq last-inclusive)
+    (iterate next-character first-inclusive)))
